@@ -21,12 +21,12 @@ document.addEventListener('DOMContentLoaded', function () {
             cellDiv.className = 'cell';
             if (cell === 'X') {
                 const img = document.createElement('img');
-                img.src = '/svg/cross.svg';
+                img.src = '/svg/x-solid.svg'; // Pfad angepasst
                 img.alt = 'X';
                 cellDiv.appendChild(img);
             } else if (cell === 'O') {
                 const img = document.createElement('img');
-                img.src = '/svg/circle.svg';
+                img.src = '/svg/o-solid.svg'; // Pfad angepasst
                 img.alt = 'O';
                 cellDiv.appendChild(img);
             }
