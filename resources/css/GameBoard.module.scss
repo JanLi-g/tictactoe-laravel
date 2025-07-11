@@ -1,0 +1,153 @@
+@use "sass:color";
+
+$color-cross:rgb(0,114,178);
+$color-circle:rgb(230,159,0);
+
+.wrapper {
+  max-width: 50vh;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  gap: 6rem;
+
+  img {
+    height: 100%;
+  }
+
+  h1 {
+    font-size: 3rem;
+    margin: 0;
+    height: 50%;
+  }
+
+  .board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+    width: 300px;
+    margin: 20px auto;
+
+    .cells {
+      width: 100%;
+      height: 100%;
+      border-collapse: collapse;
+
+      .row1 td{
+        border-bottom: 1px solid black;
+      }
+
+      .row3 td{
+        border-top: 1px solid black;
+      }
+
+      .col-middle{
+        border-left: 1px solid black;
+        border-right: 1px solid black;
+      }
+
+      td {
+        width: 100px;
+        height: 100px;
+        text-align: center;
+        vertical-align: middle;
+        cursor: pointer;
+        background-color: white;
+      }
+    }
+  }
+
+  .reset-b {
+    padding: 0.5rem 1.5rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-top: 5px;
+  }
+
+  .score{
+    display: flex;
+    width: 40%;
+    justify-content: space-between;
+  }
+
+  .active-player {
+    font-weight: bold;
+    color: green;
+    background-color: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  .scoreX{
+    color: $color-cross;
+  }
+
+  .scoreO{
+    color: $color-circle;
+  }
+
+  #scoreXId{
+    color: black;
+  }
+
+  #scoreOId{
+    color: black;
+  }
+
+  .setX{
+   background-color: color.adjust($color-cross, $lightness: 20%);
+
+    img {
+      filter: drop-shadow(0 0 4px $color-cross);
+    }
+  }
+
+  .setO{
+    background-color: color.adjust($color-circle, $lightness: 20%);
+
+    img {
+      filter: drop-shadow(0 0 4px $color-circle);
+    }
+  }
+
+  .cell {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #000;
+    cursor: pointer;
+
+    img {
+      width: 80%;
+      height: 80%;
+    }
+  }
+
+  .scores {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+
+    .score {
+      font-size: 18px;
+    }
+
+    .active {
+      font-weight: bold;
+      color: green;
+    }
+  }
+
+  .resetButton {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+}
