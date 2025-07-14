@@ -1,22 +1,29 @@
-
 const counterStore = (() => {
     let state = { X: 0, O: 0 };
     const listeners = [];
 
-    function getState() {
-        return { ...state };
+    async function syncFromDb() {
+        const dbScore = await fetchScore();
+        state = { X: dbScore.x_score, O: dbScore.o_score };
+        notify();
     }
 
-    function increment(player) {
+    async function increment(player) {
         if (player === 'X' || player === 'O') {
-            state[player]++;
+            const dbScore = await incrementScore(player.toLowerCase());
+            state = { X: dbScore.x_score, O: dbScore.o_score };
             notify();
         }
     }
 
-    function reset() {
-        state = { X: 0, O: 0 };
+    async function reset() {
+        const dbScore = await resetScore();
+        state = { X: dbScore.x_score, O: dbScore.o_score };
         notify();
+    }
+
+    function getState() {
+        return { ...state };
     }
 
     function subscribe(listener) {
@@ -27,7 +34,40 @@ const counterStore = (() => {
         listeners.forEach(fn => fn(getState()));
     }
 
-    return { getState, increment, reset, subscribe };
+    // Initial Sync beim Laden
+    syncFromDb();
+
+    return { getState, increment, reset, subscribe, syncFromDb };
 })();
+
+// Spielstände aus der Datenbank abrufen
+export async function fetchScore() {
+    const response = await fetch('/api/score');
+    return await response.json();
+}
+
+// Spielstand erhöhen
+export async function incrementScore(player) {
+    const response = await fetch('/api/score/increment', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({ player })
+    });
+    return await response.json();
+}
+
+// Spielstände zurücksetzen
+export async function resetScore() {
+    const response = await fetch('/api/score/reset', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+        }
+    });
+    return await response.json();
+}
 
 export default counterStore;

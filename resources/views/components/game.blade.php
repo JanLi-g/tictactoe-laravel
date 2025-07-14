@@ -13,4 +13,4 @@
     </div>
 @endsection
 
-@vite(['resources/js/gameboard.js', 'resources/css/app.scss'])
+@vite(['resources/js/app.js', 'resources/css/app.scss'])
