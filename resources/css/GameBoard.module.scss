@@ -144,10 +144,20 @@ $color-circle:rgb(230,159,0);
   }
 
   .resetButton {
-    display: block;
-    margin: 20px auto;
-    padding: 10px 20px;
-    font-size: 16px;
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    font-size: 1.2rem;
     cursor: pointer;
+    margin-top: 5px;
+    background-color: green;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: background 0.2s;
+
+    &:hover {
+      background-color: darkgreen;
+    }
   }
 }

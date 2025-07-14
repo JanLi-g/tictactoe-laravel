@@ -50,12 +50,15 @@ document.addEventListener('DOMContentLoaded', function () {
     function handleCellClick(index) {
         if (board[index] || isGameOver) return;
         board[index] = currentPlayer;
-        renderBoard();
+        renderBoard(); // Erst das Board aktualisieren
 
         if (checkWinner(board, currentPlayer)) {
-            alert(`Player ${currentPlayer} has won!`);
-            counterStore.increment(currentPlayer);
             isGameOver = true;
+            counterStore.increment(currentPlayer);
+            renderScores(counterStore.getState());
+            setTimeout(() => {
+                alert(`Player ${currentPlayer} has won!`);
+            }, 100); // Alert leicht verzögern, damit das letzte Symbol sichtbar ist
         } else {
             currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
             renderScores(counterStore.getState());
