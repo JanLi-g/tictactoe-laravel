@@ -40,8 +40,10 @@ const counterStore = (() => {
         listeners.forEach(fn => fn(getState()));
     }
 
-    // Initial Sync beim Laden
-    syncFromDb();
+    // Initial sync beim Laden
+    (async () => {
+        await syncFromDb();
+    })();
 
     return { getState, increment, reset, subscribe, syncFromDb };
 })();

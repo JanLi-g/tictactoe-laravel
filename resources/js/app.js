@@ -54,7 +54,14 @@ document.addEventListener('DOMContentLoaded', function () {
             await counterStore.increment(currentPlayer);
             renderScores(counterStore.getState());
             setTimeout(() => {
-                alert(`Player ${currentPlayer} has won!`);
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert';
+                alertDiv.textContent = `Player ${currentPlayer} has won!`;
+                document.body.appendChild(alertDiv);
+
+                setTimeout(() => {
+                    alertDiv.remove();
+                }, 3000);
             }, 100);
         } else {
             currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
