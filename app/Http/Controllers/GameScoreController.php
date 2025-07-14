@@ -3,15 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Models\GameScore;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * Klasse GameScoreController
+ *
+ * Diese Klasse verwaltet den Spielstand für ein Spiel.
+ * Sie ermöglicht das Anzeigen, Erhöhen und Zurücksetzen des Spielstands.
+ */
 class GameScoreController extends Controller
 {
-    // Spielstände abrufen
+
+    public function index(){
+        return view('game');
+    }
+
+    /**
+     * Zeigt den aktuellen Spielstand an.
+     *
+     * @return JsonResponse
+     */
     public function show()
     {
-        /** @var GameScore $score */
         $score = GameScore::first();
         // Falls noch kein Eintrag existiert, einen anlegen
         if (!$score) {
@@ -20,14 +35,15 @@ class GameScoreController extends Controller
                 'o_score' => 0,
             ]);
         }
+
         Log::info('Spielstand abgerufen', ['x_score' => $score->x_score, 'o_score' => $score->o_score]);
+
         return response()->json($score);
     }
 
     // Spielstand erhöhen
     public function increment(Request $request)
     {
-        /** @var GameScore $score */
         $score = GameScore::first();
         if (!$score) {
             $score = GameScore::create([
@@ -48,22 +64,14 @@ class GameScoreController extends Controller
         return response()->json($score);
     }
 
-    // Spielstände zurücksetzen
+    // Spielstand zurücksetzen
     public function reset()
     {
-        /** @var GameScore $score */
-        $score = GameScore::first();
-        if (!$score) {
-            $score = GameScore::create([
-                'x_score' => 0,
-                'o_score' => 0,
-            ]);
-        } else {
-            $score->x_score = 0;
-            $score->o_score = 0;
-            $score->save();
-        }
+        // Nur den Spielstand in der Session zurücksetzen
+        session(['x_score' => 0, 'o_score' => 0]);
 
-        return response()->json($score);
+        Log::info('Spielstand wurde zurückgesetzt.');
+
+        return response()->json(['message' => 'Spielstand zurückgesetzt.', 'x_score' => 0, 'o_score' => 0]);
     }
 }

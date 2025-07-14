@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('game_scores', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+//            $uuid->uuid('game_id')->unique();
             $table->integer('x_score')->default(0);
             $table->integer('o_score')->default(0);
         });
