@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GameScoreController;
 
 Route::get('/score', [GameScoreController::class, 'show']);

@@ -1,3 +1,9 @@
+/**
+ * @typedef {Object} Score
+ * @property {number} x_score
+ * @property {number} o_score
+ */
+
 const counterStore = (() => {
     let state = { X: 0, O: 0 };
     const listeners = [];
@@ -40,13 +46,13 @@ const counterStore = (() => {
     return { getState, increment, reset, subscribe, syncFromDb };
 })();
 
-// Spielstände aus der Datenbank abrufen
+/** @returns {Promise<Score>} */
 export async function fetchScore() {
     const response = await fetch('/api/score');
     return await response.json();
 }
 
-// Spielstand erhöhen
+/** @returns {Promise<Score>} */
 export async function incrementScore(player) {
     const response = await fetch('/api/score/increment', {
         method: 'POST',
@@ -59,7 +65,7 @@ export async function incrementScore(player) {
     return await response.json();
 }
 
-// Spielstände zurücksetzen
+/** @returns {Promise<Score>} */
 export async function resetScore() {
     const response = await fetch('/api/score/reset', {
         method: 'POST',
