@@ -237,7 +237,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     resetBtn.addEventListener('click', async function (e) {
         e.preventDefault();
         board = Array(9).fill(null);
-        currentPlayer = PLAYER_X;
+        currentPlayer = PLAYER_X; // Immer zu X wechseln
         isGameOver = false;
         try {
             const csrfToken = document.querySelector('meta[name="csrf-token"]');
@@ -251,6 +251,8 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
         renderBoard();
         await renderScores(API.SCORES);
+        updateScoreHighlight();
+        updateBoardTurnClass();
     });
 
     backBtn.addEventListener('click', function () {
