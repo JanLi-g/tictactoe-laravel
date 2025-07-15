@@ -20,14 +20,15 @@ class GameScoreController extends Controller
             ]);
         }
 
-        $score->x_score = $score->x_score;
-        $score->o_score = $score->o_score;
         $board = array_fill(0, 9, null);
         $currentPlayer = 'X';
         $isGameOver = false;
         Session::put('board', $board);
         Session::put('currentPlayer', $currentPlayer);
-        Session::put('isGameOver', $isGameOver);
+
+        if (!Session::has('isGameOver')) {
+            Session::put('isGameOver', $isGameOver);
+        }
         return view('game', compact('score', 'board', 'currentPlayer', 'isGameOver'));
     }
 
@@ -128,7 +129,10 @@ class GameScoreController extends Controller
 
         Session::put('board', $board);
         Session::put('currentPlayer', $currentPlayer);
-        Session::put('isGameOver', $isGameOver);
+        // Status nur setzen, wenn nicht vorhanden
+        if (!Session::has('isGameOver')) {
+            Session::put('isGameOver', $isGameOver);
+        }
 
         return response()->json(['success' => true]);
     }
