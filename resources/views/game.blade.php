@@ -1,26 +1,28 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="wrapper">
-        <h1>Tic Tac Toe</h1>
+    <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+        <h2 class="title" style="margin-bottom: 3rem; font-size: x-large">Tic Tac Toe</h2>
         <div class="scores">
-            <x-score player="X" :score="$score->x_score" />
-            <x-score player="O" :score="$score->o_score" />
+            <x-score player="X" :score="$score->x_score" :active="$currentPlayer === 'X'" />
+            <x-score player="O" :score="$score->o_score" :active="$currentPlayer === 'O'" />
         </div>
         <x-game-board :board="$board" :current-player="$currentPlayer" :is-game-over="$isGameOver" />
+        <div class="button-row" style="display: flex; gap: 0.5rem; margin-top: 0.5rem; margin-bottom: 2rem; align-items: center;">
+            <a href="{{ route('home') }}" id="back-btn" class="resetButton">Zurück zum Dashboard</a>
+            <form method="POST" action="{{ route('tictactoe.reset') }}" style="display:inline-block;">
+                @csrf
+                <x-button id="reset-btn" class="resetButton" type="submit">Spielfeld zurücksetzen</x-button>
+            </form>
+            <form method="POST" action="{{ route('tictactoe.hardreset') }}" style="display:inline-block;">
+                @csrf
+                <x-button id="hardreset-btn" class="resetButton" type="submit">Hardreset (Score &amp; Spielfeld)</x-button>
+            </form>
+        </div>
+        <x-modal />
         <script id="game-data" type="application/json">
             {!! json_encode([ 'board' => $board, 'currentPlayer' => $currentPlayer, 'isGameOver' => $isGameOver ]) !!}
         </script>
-        <form method="POST" action="{{ route('tictactoe.reset') }}" style="display:inline-block;">
-            @csrf
-            <x-button id="reset-btn" class="resetButton" type="submit">Spielfeld zurücksetzen</x-button>
-        </form>
-        <form method="POST" action="{{ route('tictactoe.hardreset') }}" style="display:inline-block; margin-left:10px;">
-            @csrf
-            <x-button id="hardreset-btn" class="resetButton" type="submit">Hardreset (Score &amp; Spielfeld)</x-button>
-        </form>
-        <a href="{{ route('home') }}" id="back-btn" class="resetButton">Zurück zum Dashboard</a>
-        <x-modal />
     </div>
 @endsection
 
