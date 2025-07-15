@@ -9,4 +9,5 @@ Route::middleware(['web'])->group(function () {
     Route::post('/scores/reset', [GameScoreController::class, 'reset']);
     Route::post('/scores/reset-session', [GameScoreController::class, 'resetSessionScore']);
     Route::post('/game/save-state', [GameScoreController::class, 'saveGameState']);
+    Route::get('/scores/session', [GameScoreController::class, 'showSession']);
 });

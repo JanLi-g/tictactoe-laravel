@@ -57,6 +57,16 @@ document.addEventListener('DOMContentLoaded', async function () {
         scoreO.classList.toggle('active', currentPlayer === 'O');
     }
 
+    async function renderScoresFromSessionOrDb() {
+        // Erst Session-Scores abfragen
+        const response = await fetch('/api/scores/session');
+        const scores = await response.json();
+        scoreX.textContent = `X: ${scores.x_score}`;
+        scoreO.textContent = `O: ${scores.o_score}`;
+        scoreX.classList.toggle('active', currentPlayer === 'X');
+        scoreO.classList.toggle('active', currentPlayer === 'O');
+    }
+
     function checkWinner() {
         const winPatterns = [
             [0,1,2],[3,4,5],[6,7,8], // Reihen
@@ -96,10 +106,12 @@ document.addEventListener('DOMContentLoaded', async function () {
                         isGameOver
                     })
                 });
-                const data = await res.json();
-                scoreX.textContent = 'X: ' + data.x_score;
-                scoreO.textContent = 'O: ' + data.o_score;
 
+                const data = await res.json();
+                scoreX.textContent = `X: ${data.x_score}`;
+                scoreO.textContent = `O: ${data.o_score}`;
+                scoreX.classList.toggle('active', currentPlayer === 'X');
+                scoreO.classList.toggle('active', currentPlayer === 'O');
                 // Alert erst nach Score-Update anzeigen
                 setTimeout(() => {
                     alert('Player ' + winner + ' hat gewonnen!');
@@ -160,18 +172,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         window.location.href = '/';
     });
 
-    // Nach dem Laden der Seite die Scores aus der Datenbank anzeigen
-    renderScoresFromServer();
-
-    if (resetBtn) {
-        resetBtn.addEventListener('click', function () {
-            // Kurzes Timeout, damit das Backend die Session zurücksetzt
-            setTimeout(() => {
-                renderScoresFromServer();
-            }, 300);
-        });
-    }
-    // Initialer Sync der Spielstände aus der Datenbank1
-    await renderScoresFromServer();
+    // Nach dem Laden der Seite die Scores aus der Session oder DB anzeigen
+    await renderScoresFromSessionOrDb();
     renderBoard();
 });

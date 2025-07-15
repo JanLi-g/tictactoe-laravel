@@ -19,10 +19,9 @@ class GameScoreController extends Controller
                 'o_score' => 0,
             ]);
         }
-        // Immer die DB-Scores anzeigen, unabhängig von Session
+
         $score->x_score = $score->x_score;
         $score->o_score = $score->o_score;
-        // Spielfeld beim Reload zurücksetzen
         $board = array_fill(0, 9, null);
         $currentPlayer = 'X';
         $isGameOver = false;
@@ -34,7 +33,6 @@ class GameScoreController extends Controller
 
     public function show()
     {
-        // Immer die Scores aus der Datenbank zurückgeben
         $score = GameScore::first();
         if (!$score) {
             $score = GameScore::create([
@@ -64,9 +62,18 @@ class GameScoreController extends Controller
             $score->o_score++;
         }
         $score->save();
+        $x_session = Session::get('x_score', 0);
+        $o_session = Session::get('o_score', 0);
+        if ($player === 'x') {
+            $x_session++;
+        } elseif ($player === 'o') {
+            $o_session++;
+        }
+        Session::put('x_score', $x_session);
+        Session::put('o_score', $o_session);
         return response()->json([
-            'x_score' => $score->x_score,
-            'o_score' => $score->o_score,
+            'x_score' => $x_session,
+            'o_score' => $o_session,
         ]);
     }
 
@@ -124,5 +131,29 @@ class GameScoreController extends Controller
         Session::put('isGameOver', $isGameOver);
 
         return response()->json(['success' => true]);
+    }
+
+    public function showSession()
+    {
+        $x_score = Session::get('x_score');
+        $o_score = Session::get('o_score');
+        if ($x_score !== null && $o_score !== null) {
+            return response()->json([
+                'x_score' => $x_score,
+                'o_score' => $o_score,
+            ]);
+        }
+        // Fallback: Score aus Datenbank
+        $score = GameScore::first();
+        if (!$score) {
+            $score = GameScore::create([
+                'x_score' => 0,
+                'o_score' => 0,
+            ]);
+        }
+        return response()->json([
+            'x_score' => $score->x_score,
+            'o_score' => $score->o_score,
+        ]);
     }
 }
