@@ -55,8 +55,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             const scores = await response.json();
             scoreX.textContent = `X: ${scores.x_score}`;
             scoreO.textContent = `O: ${scores.o_score}`;
-            scoreX.classList.toggle('active', currentPlayer === 'X');
-            scoreO.classList.toggle('active', currentPlayer === 'O');
+            // Keine Highlight-Logik mehr im JS
         } catch (e) {
             console.error('Fehler beim Laden der Scores:', e);
         }
@@ -93,8 +92,17 @@ document.addEventListener('DOMContentLoaded', async function () {
         document.body.appendChild(modal);
     }
 
-    async function handleCellClick(idx) {
+    function updateScoreHighlight() {
+        scoreX.classList.remove('active');
+        scoreO.classList.remove('active');
+        if (currentPlayer === 'X') {
+            scoreX.classList.add('active');
+        } else {
+            scoreO.classList.add('active');
+        }
+    }
 
+    async function handleCellClick(idx) {
         if (isGameOver || board[idx]) return;
         board[idx] = currentPlayer;
         renderBoard();
@@ -116,22 +124,27 @@ document.addEventListener('DOMContentLoaded', async function () {
                 const data = await res.json();
                 scoreX.textContent = `X: ${data.x_score}`;
                 scoreO.textContent = `O: ${data.o_score}`;
-                scoreX.classList.toggle('active', currentPlayer === 'X');
-                scoreO.classList.toggle('active', currentPlayer === 'O');
+                updateScoreHighlight();
+                await fetch('/api/game/save-state', {
+                    method: 'POST', headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken ? csrfToken.getAttribute('content') : ''
+                    }, body: JSON.stringify({
+                        board, currentPlayer, isGameOver
+                    })
+                });
                 setTimeout(() => {
-                    showModal('Player ' + winner + ' hat gewonnen!');
+                    showModal(`Player ${winner} hat gewonnen!`);
                 }, 400);
             } catch (e) {
                 console.error('Fehler beim Score-Update:', e);
                 setTimeout(() => {
-                    showModal('Player ' + winner + ' hat gewonnen!');
+                    showModal(`Player ${winner} hat gewonnen!`);
                 }, 400);
             }
         } else {
             currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-            scoreX.classList.toggle('active', currentPlayer === 'X');
-            scoreO.classList.toggle('active', currentPlayer === 'O');
-
+            updateScoreHighlight();
             try {
                 const csrfToken = document.querySelector('meta[name="csrf-token"]');
                 await fetch('/api/game/save-state', {
@@ -173,4 +186,5 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     await renderScores('/api/scores/session');
     renderBoard();
+    updateScoreHighlight();
 });

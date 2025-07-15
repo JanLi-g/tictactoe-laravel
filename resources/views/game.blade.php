@@ -4,7 +4,7 @@
     <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
         <h1 class="title">Tic Tac Toe</h1>
         <h2 class="subtitle "> Score:</h2>
-        <div class="scores">
+        <div class="scores" style="display: flex; gap: 1rem;">
             <x-score player="X" :score="$score->x_score" :active="$currentPlayer === 'X'" />
             <x-score player="O" :score="$score->o_score" :active="$currentPlayer === 'O'" />
         </div>
