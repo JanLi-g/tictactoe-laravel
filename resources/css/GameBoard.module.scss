@@ -37,14 +37,16 @@ $color-circle: rgb(230, 159, 0);
             background-color: #fff;
             transition: background-color 0.3s;
 
-            &:hover {
-                background-color: color.adjust($color-cross, $lightness: 40%);
-            }
-
             img, .icon-x, .icon-o {
                 width: 80%;
                 height: 80%;
             }
+        }
+        .board.x-turn .cell:hover {
+            background-color: color.adjust($color-cross, $lightness: 40%);
+        }
+        .board.o-turn .cell:hover {
+            background-color: color.adjust($color-circle, $lightness: 40%);
         }
     }
 

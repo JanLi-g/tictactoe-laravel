@@ -88,51 +88,26 @@ document.addEventListener('DOMContentLoaded', async function () {
             if (cell === 'X') {
                 cellDiv.classList.add('setX');
                 cellDiv.innerHTML = `
-      <svg class="icon-x" viewBox="0 0 100 100">
-        <path d="M20,20 L80,80 M80,20 L20,80" stroke="currentColor" stroke-width="10" fill="none"/>
-      </svg>
-    `;
+                <svg class="icon-x" viewBox="0 0 100 100">
+                    <path d="M20,20 L80,80 M80,20 L20,80" stroke="currentColor" stroke-width="10" fill="none"/>
+                </svg>
+            `;
             } else if (cell === 'O') {
                 cellDiv.classList.add('setO');
                 cellDiv.innerHTML = `
-      <svg class="icon-o" viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r="35" stroke="currentColor" stroke-width="10" fill="none"/>
-      </svg>
-    `;
+                <svg class="icon-o" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="35" stroke="currentColor" stroke-width="10" fill="none"/>
+                </svg>
+            `;
+            } else {
+                // Hover-Klasse je nach aktuellem Spieler setzen
+                cellDiv.classList.add(currentPlayer === 'X' ? 'hover-x' : 'hover-o');
             }
-            // if (cell === 'X') {
-            //     cellDiv.classList.add('setX');
-            //     const img = document.createElement('img');
-            //     img.src = `/svg/x-solid.svg`;
-            //     img.alt = 'X';
-            //     cellDiv.appendChild(img);
-            // } else if (cell === 'O') {
-            //     cellDiv.classList.add('setO');
-            //     const img = document.createElement('img');
-            //     img.src = `/svg/o-solid.svg`;
-            //     img.alt = 'O';
-            //     cellDiv.appendChild(img);
-            // }
             cellDiv.addEventListener('click', () => handleCellClick(idx));
             boardContainer.appendChild(cellDiv);
         });
+        updateBoardTurnClass(); // <-- Hier einfügen
     }
-    // function renderBoard() {
-    //     boardContainer.innerHTML = '';
-    //     board.forEach((cell, idx) => {
-    //         const cellDiv = document.createElement('div');
-    //         cellDiv.className = 'cell';
-    //         if (cell === 'X' || cell === 'O') {
-    //             const img = document.createElement('img');
-    //             img.src = `/svg/${cell.toLowerCase()}-solid.svg`;
-    //             img.alt = cell;
-    //             cellDiv.appendChild(img);
-    //         }
-    //         cellDiv.addEventListener('click', () => handleCellClick(idx));
-    //         boardContainer.appendChild(cellDiv);
-    //     });
-    // }
-
     /**
      * Überprüft, ob es einen Gewinner gibt.
      * @returns {any|null}
@@ -233,6 +208,14 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     /**
+     * Setzt eine Klasse am Spielfeld-Container, die den aktuellen Spieler anzeigt.
+     */
+    function updateBoardTurnClass() {
+        boardContainer.classList.remove('x-turn', 'o-turn');
+        boardContainer.classList.add(currentPlayer === 'X' ? 'x-turn' : 'o-turn');
+    }
+
+    /**
      * Behandelt den Klick auf eine Zelle des Spielfelds.
      * @param idx
      * @returns {Promise<void>}
@@ -306,4 +289,5 @@ document.addEventListener('DOMContentLoaded', async function () {
     await renderScores(API.SCORES_SESSION);
     renderBoard();
     updateScoreHighlight();
+    updateBoardTurnClass();
 });
