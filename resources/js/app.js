@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const scoreO = document.getElementById('score-o');
     const resetBtn = document.getElementById('reset-btn');
     const backBtn = document.getElementById('back-btn');
+    const wrapper = document.querySelector('.wrapper');
 
     if (!boardContainer) {
         console.error('Das Element #game-board wurde nicht gefunden. Stellen Sie sicher, dass es in der HTML-Datei vorhanden ist.');
@@ -274,6 +275,13 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     /**
+     * Funktion um das Board anzuzeigen.
+     */
+    function showBoard() {
+        if (wrapper) wrapper.classList.add('visible');
+    }
+
+    /**
      * Initialisiert das Spiel und rendert das Board sowie die Scores.
      */
     async function initGame() {
@@ -281,6 +289,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         renderBoard();
         updateScoreHighlight();
         updateBoardTurnClass();
+        showBoard();
     }
 
     // Initialisierung aufrufen

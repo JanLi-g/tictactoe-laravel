@@ -4,6 +4,7 @@ $color-cross: rgb(0, 114, 178);
 $color-circle: rgb(230, 159, 0);
 
 .wrapper {
+    visibility: hidden;
     max-width: 50vh;
     margin: auto;
     display: flex;
@@ -16,6 +17,10 @@ $color-circle: rgb(230, 159, 0);
         font-size: 3rem;
         margin: 0;
     }
+}
+
+.wrapper.visible {
+    visibility: visible;
 }
 
 .wrapper .board {
