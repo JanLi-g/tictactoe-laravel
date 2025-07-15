@@ -66,6 +66,31 @@ $color-circle: rgb(230, 159, 0);
         width: auto;
     }
 
+    .score.active {
+        background: linear-gradient(90deg, #e3f0ff 60%, #fff 100%);
+        box-shadow: 0 0 12px 2px rgba(25, 118, 210, 0.15);
+        border: 2px solid #1976d2;
+        animation: pulseScore 0.8s infinite alternate;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        transition: background 0.3s, box-shadow 0.3s;
+    }
+
+    .scoreX.active {
+        border-color: $color-cross;
+        box-shadow: 0 0 12px 2px rgba(0, 114, 178, 0.25);
+    }
+
+    .scoreO.active {
+        border-color: $color-circle;
+        box-shadow: 0 0 12px 2px rgba(230, 159, 0, 0.25);
+    }
+
+    @keyframes pulseScore {
+        from { transform: scale(1); }
+        to { transform: scale(1.04); }
+    }
+
     .scoreX {
         color: $color-cross;
     }
