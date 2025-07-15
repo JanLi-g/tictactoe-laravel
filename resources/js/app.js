@@ -2,7 +2,7 @@ import './bootstrap';
 import '../css/app.scss';
 
 document.addEventListener('DOMContentLoaded', async function () {
-    // Board-Daten aus eingebettetem JSON laden
+
     let gameData = document.getElementById('game-data');
     let initialData = {board: Array(9).fill(null), currentPlayer: 'X', isGameOver: false};
     if (gameData) {
@@ -58,7 +58,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     async function renderScoresFromSessionOrDb() {
-        // Erst Session-Scores abfragen
         const response = await fetch('/api/scores/session');
         const scores = await response.json();
         scoreX.textContent = `X: ${scores.x_score}`;
@@ -68,30 +67,32 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     function checkWinner() {
-        const winPatterns = [[0, 1, 2], [3, 4, 5], [6, 7, 8], // Reihen
-            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Spalten
-            [0, 4, 8], [2, 4, 6]          // Diagonalen
+        const winPatterns = [[0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
         ];
         for (const pattern of winPatterns) {
             const [a, b, c] = pattern;
             if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-                return board[a]; // 'X' oder 'O'
+                return board[a];
             }
         }
         return null;
     }
 
     async function handleCellClick(idx) {
+
         if (isGameOver || board[idx]) return;
         board[idx] = currentPlayer;
         renderBoard();
         const winner = checkWinner();
+
         if (winner) {
             isGameOver = true;
-            // Score hochzählen und anzeigen
-            const player = winner.toLowerCase(); // 'x' oder 'o'
+            const player = winner.toLowerCase();
             try {
                 const csrfToken = document.querySelector('meta[name="csrf-token"]');
+
                 const res = await fetch('/api/scores/increment', {
                     method: 'POST', headers: {
                         'Content-Type': 'application/json',
@@ -120,7 +121,6 @@ document.addEventListener('DOMContentLoaded', async function () {
             scoreX.classList.toggle('active', currentPlayer === 'X');
             scoreO.classList.toggle('active', currentPlayer === 'O');
 
-            // Save game state after each move
             try {
                 const csrfToken = document.querySelector('meta[name="csrf-token"]');
                 await fetch('/api/game/save-state', {
@@ -139,20 +139,18 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     resetBtn.addEventListener('click', async function (e) {
         e.preventDefault();
-
         board = Array(9).fill(null);
         currentPlayer = 'X';
         isGameOver = false;
-
         try {
             const csrfToken = document.querySelector('meta[name="csrf-token"]');
-            await fetch('/api/scores/reset', {
+            await fetch('/game/reset', {
                 method: 'POST', headers: {
                     'X-CSRF-TOKEN': csrfToken ? csrfToken.getAttribute('content') : ''
                 }
             });
         } catch (e) {
-            console.error('Fehler beim Score-Reset:', e);
+            console.error('Fehler beim Spielfeld-Reset:', e);
         }
         renderBoard();
         await renderScoresFromServer();

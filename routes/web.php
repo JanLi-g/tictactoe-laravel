@@ -20,5 +20,6 @@ Route::get('/', function () {
  */
 Route::get('/game', [GameScoreController::class, 'index'])->name('game.index');
 Route::post('/game/reset', [GameScoreController::class, 'resetGame'])->name('tictactoe.reset');
+Route::post('/game/hardreset', [GameScoreController::class, 'hardReset'])->name('tictactoe.hardreset');
 
 require base_path('config/auth.php');

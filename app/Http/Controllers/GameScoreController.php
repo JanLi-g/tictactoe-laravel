@@ -3,13 +3,48 @@
 namespace App\Http\Controllers;
 
 use App\Models\GameScore;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
+/**
+ * Class GameScoreController
+ * Handles game score management, including displaying scores, incrementing scores,
+ * resetting scores, and managing game state in sessions.
+ */
 class GameScoreController extends Controller
 {
+    private function getSessionScore($player)
+    {
+        return Session::get($player . '_score', 0);
+    }
+
+    private function setSessionScore($player, $value)
+    {
+        Session::put($player . '_score', $value);
+    }
+
+    private function resetSessionScores()
+    {
+        Session::put('x_score', 0);
+        Session::put('o_score', 0);
+    }
+
+    private function getSessionGameState()
+    {
+        return [
+            'board' => Session::get('board', array_fill(0, 9, null)),
+            'currentPlayer' => Session::get('currentPlayer', 'X'),
+            'isGameOver' => Session::get('isGameOver', false),
+        ];
+    }
+
+    private function setSessionGameState($board, $currentPlayer, $isGameOver)
+    {
+        Session::put('board', $board);
+        Session::put('currentPlayer', $currentPlayer);
+        Session::put('isGameOver', $isGameOver);
+    }
+
     public function index()
     {
         $score = GameScore::first();
@@ -20,16 +55,16 @@ class GameScoreController extends Controller
             ]);
         }
 
-        $board = array_fill(0, 9, null);
-        $currentPlayer = 'X';
-        $isGameOver = false;
-        Session::put('board', $board);
-        Session::put('currentPlayer', $currentPlayer);
-
-        if (!Session::has('isGameOver')) {
-            Session::put('isGameOver', $isGameOver);
+        if (!Session::has('board')) {
+            $this->setSessionGameState(array_fill(0, 9, null), 'X', false);
         }
-        return view('game', compact('score', 'board', 'currentPlayer', 'isGameOver'));
+        $gameState = $this->getSessionGameState();
+        return view('game', [
+            'score' => $score,
+            'board' => $gameState['board'],
+            'currentPlayer' => $gameState['currentPlayer'],
+            'isGameOver' => $gameState['isGameOver'],
+        ]);
     }
 
     public function show()
@@ -49,32 +84,23 @@ class GameScoreController extends Controller
 
     public function increment(Request $request)
     {
-        $score = GameScore::first();
-        if (!$score) {
-            $score = GameScore::create([
-                'x_score' => 0,
-                'o_score' => 0,
-            ]);
-        }
+        $score = GameScore::first() ?? GameScore::create([
+            'x_score' => 0,
+            'o_score' => 0,
+        ]);
+
         $player = $request->input('player'); // 'x' oder 'o'
-        if ($player === 'x') {
-            $score->x_score++;
-        } elseif ($player === 'o') {
-            $score->o_score++;
+
+        if ($player === 'x' || $player === 'o') {
+            $score->{$player . '_score'}++;
+            $score->save();
+            $sessionScore = $this->getSessionScore($player);
+            $this->setSessionScore($player, $sessionScore + 1);
         }
-        $score->save();
-        $x_session = Session::get('x_score', 0);
-        $o_session = Session::get('o_score', 0);
-        if ($player === 'x') {
-            $x_session++;
-        } elseif ($player === 'o') {
-            $o_session++;
-        }
-        Session::put('x_score', $x_session);
-        Session::put('o_score', $o_session);
+
         return response()->json([
-            'x_score' => $x_session,
-            'o_score' => $o_session,
+            'x_score' => $this->getSessionScore('x'),
+            'o_score' => $this->getSessionScore('o'),
         ]);
     }
 
@@ -99,8 +125,7 @@ class GameScoreController extends Controller
 
     public function resetSessionScore(Request $request)
     {
-        Session::put('x_score', 0);
-        Session::put('o_score', 0);
+        $this->resetSessionScores();
         return response()->json([
             'x_score' => 0,
             'o_score' => 0,
@@ -109,15 +134,25 @@ class GameScoreController extends Controller
 
     public function resetGame(Request $request)
     {
-        // Reset board state
-        Session::put('board', array_fill(0, 9, null));
-        Session::put('currentPlayer', 'X');
-        Session::put('isGameOver', false);
+        $this->setSessionGameState(array_fill(0, 9, null), 'X', false);
+        return redirect()->route('game.index');
+    }
 
-        // Reset session scores
-        Session::put('x_score', 0);
-        Session::put('o_score', 0);
-
+    public function hardReset(Request $request)
+    {
+        $score = GameScore::first();
+        if (!$score) {
+            $score = GameScore::create([
+                'x_score' => 0,
+                'o_score' => 0,
+            ]);
+        } else {
+            $score->x_score = 0;
+            $score->o_score = 0;
+            $score->save();
+        }
+        $this->resetSessionScores();
+        $this->setSessionGameState(array_fill(0, 9, null), 'X', false);
         return redirect()->route('game.index');
     }
 
@@ -126,28 +161,20 @@ class GameScoreController extends Controller
         $board = $request->input('board', array_fill(0, 9, null));
         $currentPlayer = $request->input('currentPlayer', 'X');
         $isGameOver = $request->input('isGameOver', false);
-
-        Session::put('board', $board);
-        Session::put('currentPlayer', $currentPlayer);
-        // Status nur setzen, wenn nicht vorhanden
-        if (!Session::has('isGameOver')) {
-            Session::put('isGameOver', $isGameOver);
-        }
-
+        $this->setSessionGameState($board, $currentPlayer, $isGameOver);
         return response()->json(['success' => true]);
     }
 
     public function showSession()
     {
-        $x_score = Session::get('x_score');
-        $o_score = Session::get('o_score');
+        $x_score = $this->getSessionScore('x');
+        $o_score = $this->getSessionScore('o');
         if ($x_score !== null && $o_score !== null) {
             return response()->json([
                 'x_score' => $x_score,
                 'o_score' => $o_score,
             ]);
         }
-        // Fallback: Score aus Datenbank
         $score = GameScore::first();
         if (!$score) {
             $score = GameScore::create([
