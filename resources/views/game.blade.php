@@ -2,7 +2,8 @@
 
 @section('content')
     <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
-        <h2 class="title" style="margin-bottom: 3rem; font-size: x-large">Tic Tac Toe</h2>
+        <h1 class="title">Tic Tac Toe</h1>
+        <h2 class="subtitle "> Score:</h2>
         <div class="scores">
             <x-score player="X" :score="$score->x_score" :active="$currentPlayer === 'X'" />
             <x-score player="O" :score="$score->o_score" :active="$currentPlayer === 'O'" />
