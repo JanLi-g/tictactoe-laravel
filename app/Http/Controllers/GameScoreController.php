@@ -45,16 +45,27 @@ class GameScoreController extends Controller
         Session::put('isGameOver', $isGameOver);
     }
 
+    private function getOrCreateScore()
+    {
+        return GameScore::first() ?? GameScore::create([
+            'x_score' => 0,
+            'o_score' => 0,
+        ]);
+    }
+
+    private function incrementScore($player)
+    {
+        $score = $this->getOrCreateScore();
+        if (in_array($player, ['x', 'o'])) {
+            $score->{$player . '_score'}++;
+            $score->save();
+            $this->setSessionScore($player, $this->getSessionScore($player) + 1);
+        }
+    }
+
     public function index()
     {
-        $score = GameScore::first();
-        if (!$score) {
-            $score = GameScore::create([
-                'x_score' => 0,
-                'o_score' => 0,
-            ]);
-        }
-
+        $score = $this->getOrCreateScore();
         if (!Session::has('board')) {
             $this->setSessionGameState(array_fill(0, 9, null), 'X', false);
         }
@@ -69,13 +80,7 @@ class GameScoreController extends Controller
 
     public function show()
     {
-        $score = GameScore::first();
-        if (!$score) {
-            $score = GameScore::create([
-                'x_score' => 0,
-                'o_score' => 0,
-            ]);
-        }
+        $score = $this->getOrCreateScore();
         return response()->json([
             'x_score' => $score->x_score,
             'o_score' => $score->o_score,
@@ -84,20 +89,8 @@ class GameScoreController extends Controller
 
     public function increment(Request $request)
     {
-        $score = GameScore::first() ?? GameScore::create([
-            'x_score' => 0,
-            'o_score' => 0,
-        ]);
-
-        $player = $request->input('player'); // 'x' oder 'o'
-
-        if ($player === 'x' || $player === 'o') {
-            $score->{$player . '_score'}++;
-            $score->save();
-            $sessionScore = $this->getSessionScore($player);
-            $this->setSessionScore($player, $sessionScore + 1);
-        }
-
+        $player = $request->input('player');
+        $this->incrementScore($player);
         return response()->json([
             'x_score' => $this->getSessionScore('x'),
             'o_score' => $this->getSessionScore('o'),
@@ -106,17 +99,10 @@ class GameScoreController extends Controller
 
     public function reset()
     {
-        $score = GameScore::first();
-        if (!$score) {
-            $score = GameScore::create([
-                'x_score' => 0,
-                'o_score' => 0,
-            ]);
-        } else {
-            $score->x_score = 0;
-            $score->o_score = 0;
-            $score->save();
-        }
+        $score = $this->getOrCreateScore();
+        $score->x_score = 0;
+        $score->o_score = 0;
+        $score->save();
         return response()->json([
             'x_score' => $score->x_score,
             'o_score' => $score->o_score,
@@ -140,17 +126,10 @@ class GameScoreController extends Controller
 
     public function hardReset(Request $request)
     {
-        $score = GameScore::first();
-        if (!$score) {
-            $score = GameScore::create([
-                'x_score' => 0,
-                'o_score' => 0,
-            ]);
-        } else {
-            $score->x_score = 0;
-            $score->o_score = 0;
-            $score->save();
-        }
+        $score = $this->getOrCreateScore();
+        $score->x_score = 0;
+        $score->o_score = 0;
+        $score->save();
         $this->resetSessionScores();
         $this->setSessionGameState(array_fill(0, 9, null), 'X', false);
         return redirect()->route('game.index');
@@ -175,13 +154,7 @@ class GameScoreController extends Controller
                 'o_score' => $o_score,
             ]);
         }
-        $score = GameScore::first();
-        if (!$score) {
-            $score = GameScore::create([
-                'x_score' => 0,
-                'o_score' => 0,
-            ]);
-        }
+        $score = $this->getOrCreateScore();
         return response()->json([
             'x_score' => $score->x_score,
             'o_score' => $score->o_score,

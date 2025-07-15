@@ -48,22 +48,18 @@ document.addEventListener('DOMContentLoaded', async function () {
         });
     }
 
-    async function renderScoresFromServer() {
-        const response = await fetch('/api/scores');
-        const scores = await response.json();
-        scoreX.textContent = `X: ${scores.x_score}`;
-        scoreO.textContent = `O: ${scores.o_score}`;
-        scoreX.classList.toggle('active', currentPlayer === 'X');
-        scoreO.classList.toggle('active', currentPlayer === 'O');
-    }
 
-    async function renderScoresFromSessionOrDb() {
-        const response = await fetch('/api/scores/session');
-        const scores = await response.json();
-        scoreX.textContent = `X: ${scores.x_score}`;
-        scoreO.textContent = `O: ${scores.o_score}`;
-        scoreX.classList.toggle('active', currentPlayer === 'X');
-        scoreO.classList.toggle('active', currentPlayer === 'O');
+    async function renderScores(url) {
+        try {
+            const response = await fetch(url);
+            const scores = await response.json();
+            scoreX.textContent = `X: ${scores.x_score}`;
+            scoreO.textContent = `O: ${scores.o_score}`;
+            scoreX.classList.toggle('active', currentPlayer === 'X');
+            scoreO.classList.toggle('active', currentPlayer === 'O');
+        } catch (e) {
+            console.error('Fehler beim Laden der Scores:', e);
+        }
     }
 
     function checkWinner() {
@@ -153,13 +149,13 @@ document.addEventListener('DOMContentLoaded', async function () {
             console.error('Fehler beim Spielfeld-Reset:', e);
         }
         renderBoard();
-        await renderScoresFromServer();
+        await renderScores('/api/scores');
     });
 
     backBtn.addEventListener('click', function () {
         window.location.href = '/';
     });
 
-    await renderScoresFromSessionOrDb();
+    await renderScores('/api/scores/session');
     renderBoard();
 });
