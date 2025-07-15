@@ -6,7 +6,6 @@ import '../css/app.scss';
  */
 document.addEventListener('DOMContentLoaded', async function () {
 
-    // Konstanten für Spieler
     const PLAYER_X = 'X';
     const PLAYER_O = 'O';
 
@@ -99,7 +98,6 @@ document.addEventListener('DOMContentLoaded', async function () {
                 </svg>
             `;
             } else {
-                // Hover-Klasse je nach aktuellem Spieler setzen
                 cellDiv.classList.add(currentPlayer === PLAYER_X ? 'hover-x' : 'hover-o');
             }
             cellDiv.addEventListener('click', () => handleCellClick(idx));
@@ -143,6 +141,14 @@ document.addEventListener('DOMContentLoaded', async function () {
         modal.innerHTML = `<div style="background:#fff;padding:2rem 3rem;border-radius:8px;box-shadow:0 2px 8px #0003;font-size:1.5rem;text-align:center;cursor:pointer;">${message}<br><br><button style='margin-top:1rem;padding:0.5rem 1.5rem;font-size:1rem;'>OK</button></div>`;
         modal.querySelector('button').onclick = () => document.body.removeChild(modal);
         document.body.appendChild(modal);
+    }
+
+    /**
+     * Zeigt einen Fehler als modales Fenster an.
+     */
+    function showGameError(message, error) {
+        let errorMsg = `${message}<br><small>${error?.message || error}</small>`;
+        showModal(errorMsg);
     }
 
     /**
@@ -251,6 +257,10 @@ document.addEventListener('DOMContentLoaded', async function () {
         window.location.href = '/';
     });
 
+    /**
+     * Event-Listener für den Hardreset-Button.
+     * @type {HTMLElement}
+     */
     const hardResetBtn = document.getElementById('hardreset-btn');
     if (hardResetBtn) {
         hardResetBtn.addEventListener('click', async function (e) {
@@ -292,6 +302,5 @@ document.addEventListener('DOMContentLoaded', async function () {
         showBoard();
     }
 
-    // Initialisierung aufrufen
-    initGame();
+    await initGame();
 });
