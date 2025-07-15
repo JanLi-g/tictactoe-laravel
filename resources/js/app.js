@@ -1,18 +1,31 @@
 import './bootstrap';
 import '../css/app.scss';
-import counterStore from './counterStore.js';
 
-document.addEventListener('DOMContentLoaded', function () {
-    // Initialisiere die Spielstände aus der Datenbank
-    let board = Array(9).fill(null);
-    let currentPlayer = 'X';
-    let isGameOver = false;
+document.addEventListener('DOMContentLoaded', async function () {
+    // Board-Daten aus eingebettetem JSON laden
+    let gameData = document.getElementById('game-data');
+    let initialData = { board: Array(9).fill(null), currentPlayer: 'X', isGameOver: false };
+    if (gameData) {
+        try {
+            initialData = JSON.parse(gameData.textContent);
+        } catch (e) {
+            console.error('Fehler beim Parsen der Game-Daten:', e);
+        }
+    }
+    let board = initialData.board;
+    let currentPlayer = initialData.currentPlayer;
+    let isGameOver = initialData.isGameOver;
 
     const boardContainer = document.getElementById('game-board');
     const scoreX = document.getElementById('score-x');
     const scoreO = document.getElementById('score-o');
     const resetBtn = document.getElementById('reset-btn');
     const backBtn = document.getElementById('back-btn');
+
+    if (!boardContainer) {
+        console.error('Das Element #game-board wurde nicht gefunden. Stellen Sie sicher, dass es in der HTML-Datei vorhanden ist.');
+        return;
+    }
 
     function renderBoard() {
         boardContainer.innerHTML = '';
@@ -35,63 +48,130 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function renderScores(state) {
-        scoreX.textContent = `X: ${state.X}`;
-        scoreO.textContent = `O: ${state.O}`;
+    async function renderScoresFromServer() {
+        const response = await fetch('/api/scores');
+        const scores = await response.json();
+        scoreX.textContent = `X: ${scores.x_score}`;
+        scoreO.textContent = `O: ${scores.o_score}`;
         scoreX.classList.toggle('active', currentPlayer === 'X');
         scoreO.classList.toggle('active', currentPlayer === 'O');
     }
 
-    counterStore.subscribe(renderScores);
+    function checkWinner() {
+        const winPatterns = [
+            [0,1,2],[3,4,5],[6,7,8], // Reihen
+            [0,3,6],[1,4,7],[2,5,8], // Spalten
+            [0,4,8],[2,4,6]          // Diagonalen
+        ];
+        for (const pattern of winPatterns) {
+            const [a, b, c] = pattern;
+            if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                return board[a]; // 'X' oder 'O'
+            }
+        }
+        return null;
+    }
 
-    async function handleCellClick(index) {
-        if (board[index] || isGameOver) return;
-        board[index] = currentPlayer;
+    async function handleCellClick(idx) {
+        if (isGameOver || board[idx]) return;
+        board[idx] = currentPlayer;
         renderBoard();
-
-        if (checkWinner(board, currentPlayer)) {
+        const winner = checkWinner();
+        if (winner) {
             isGameOver = true;
-            await counterStore.increment(currentPlayer);
-            renderScores(counterStore.getState());
-            setTimeout(() => {
-                const alertDiv = document.createElement('div');
-                alertDiv.className = 'alert';
-                alertDiv.textContent = `Player ${currentPlayer} has won!`;
-                document.body.appendChild(alertDiv);
+            // Score hochzählen und anzeigen
+            const player = winner.toLowerCase(); // 'x' oder 'o'
+            try {
+                const csrfToken = document.querySelector('meta[name="csrf-token"]');
+                const res = await fetch('/api/scores/increment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken ? csrfToken.getAttribute('content') : ''
+                    },
+                    body: JSON.stringify({
+                        player,
+                        board,
+                        currentPlayer,
+                        isGameOver
+                    })
+                });
+                const data = await res.json();
+                scoreX.textContent = 'X: ' + data.x_score;
+                scoreO.textContent = 'O: ' + data.o_score;
 
+                // Alert erst nach Score-Update anzeigen
                 setTimeout(() => {
-                    alertDiv.remove();
-                }, 3000);
-            }, 100);
+                    alert('Player ' + winner + ' hat gewonnen!');
+                }, 100);
+            } catch (e) {
+                console.error('Fehler beim Score-Update:', e);
+                alert('Player ' + winner + ' hat gewonnen!');
+            }
         } else {
             currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-            renderScores(counterStore.getState());
+            scoreX.classList.toggle('active', currentPlayer === 'X');
+            scoreO.classList.toggle('active', currentPlayer === 'O');
+
+            // Save game state after each move
+            try {
+                const csrfToken = document.querySelector('meta[name="csrf-token"]');
+                await fetch('/api/game/save-state', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken ? csrfToken.getAttribute('content') : ''
+                    },
+                    body: JSON.stringify({
+                        board,
+                        currentPlayer,
+                        isGameOver
+                    })
+                });
+            } catch (e) {
+                console.error('Fehler beim Speichern des Spielstands:', e);
+            }
         }
     }
 
-    function checkWinner(board, player) {
-        const win = [
-            [0,1,2],[3,4,5],[6,7,8],
-            [0,3,6],[1,4,7],[2,5,8],
-            [0,4,8],[2,4,6]
-        ];
-        return win.some(cond => cond.every(i => board[i] === player));
-    }
+    resetBtn.addEventListener('click', async function (e) {
+        e.preventDefault();
 
-    resetBtn.addEventListener('click', async function () {
         board = Array(9).fill(null);
         currentPlayer = 'X';
         isGameOver = false;
-        await counterStore.reset();
+
+        try {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]');
+            await fetch('/api/scores/reset', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken ? csrfToken.getAttribute('content') : ''
+                }
+            });
+        } catch (e) {
+            console.error('Fehler beim Score-Reset:', e);
+        }
         renderBoard();
+        await renderScoresFromServer();
     });
 
     backBtn.addEventListener('click', function () {
         window.location.href = '/';
     });
 
-    // Initialer Sync der Spielstände aus der Datenbank
-    counterStore.syncFromDb();
+    // Nach dem Laden der Seite die Scores aus der Datenbank anzeigen
+    renderScoresFromServer();
+
+    if (resetBtn) {
+        resetBtn.addEventListener('click', function () {
+            // Kurzes Timeout, damit das Backend die Session zurücksetzt
+            setTimeout(() => {
+                renderScoresFromServer();
+            }, 300);
+        });
+    }
+    // Initialer Sync der Spielstände aus der Datenbank1
+    await renderScoresFromServer();
     renderBoard();
-    renderScores(counterStore.getState());
 });
