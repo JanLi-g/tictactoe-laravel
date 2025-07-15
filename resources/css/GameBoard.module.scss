@@ -42,12 +42,13 @@ $color-circle: rgb(230, 159, 0);
                 height: 80%;
             }
         }
-        .board.x-turn .cell:hover {
-            background-color: color.adjust($color-cross, $lightness: 40%);
-        }
-        .board.o-turn .cell:hover {
-            background-color: color.adjust($color-circle, $lightness: 40%);
-        }
+    }
+
+    .board.x-turn .cell:hover {
+        background-color: color.adjust($color-cross, $lightness: 40%);
+    }
+    .board.o-turn .cell:hover {
+        background-color: color.adjust($color-circle, $lightness: 40%);
     }
 
     .scores {

@@ -234,6 +234,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         } else {
             currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
             updateScoreHighlight();
+            updateBoardTurnClass();
             await saveGameState(board, currentPlayer, isGameOver);
         }
     }
