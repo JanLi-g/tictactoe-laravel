@@ -4,7 +4,7 @@ import '../css/app.scss';
 document.addEventListener('DOMContentLoaded', async function () {
     // Board-Daten aus eingebettetem JSON laden
     let gameData = document.getElementById('game-data');
-    let initialData = { board: Array(9).fill(null), currentPlayer: 'X', isGameOver: false };
+    let initialData = {board: Array(9).fill(null), currentPlayer: 'X', isGameOver: false};
     if (gameData) {
         try {
             initialData = JSON.parse(gameData.textContent);
@@ -68,10 +68,9 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     function checkWinner() {
-        const winPatterns = [
-            [0,1,2],[3,4,5],[6,7,8], // Reihen
-            [0,3,6],[1,4,7],[2,5,8], // Spalten
-            [0,4,8],[2,4,6]          // Diagonalen
+        const winPatterns = [[0, 1, 2], [3, 4, 5], [6, 7, 8], // Reihen
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Spalten
+            [0, 4, 8], [2, 4, 6]          // Diagonalen
         ];
         for (const pattern of winPatterns) {
             const [a, b, c] = pattern;
@@ -94,16 +93,11 @@ document.addEventListener('DOMContentLoaded', async function () {
             try {
                 const csrfToken = document.querySelector('meta[name="csrf-token"]');
                 const res = await fetch('/api/scores/increment', {
-                    method: 'POST',
-                    headers: {
+                    method: 'POST', headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': csrfToken ? csrfToken.getAttribute('content') : ''
-                    },
-                    body: JSON.stringify({
-                        player,
-                        board,
-                        currentPlayer,
-                        isGameOver
+                    }, body: JSON.stringify({
+                        player, board, currentPlayer, isGameOver
                     })
                 });
 
@@ -112,13 +106,14 @@ document.addEventListener('DOMContentLoaded', async function () {
                 scoreO.textContent = `O: ${data.o_score}`;
                 scoreX.classList.toggle('active', currentPlayer === 'X');
                 scoreO.classList.toggle('active', currentPlayer === 'O');
-                // Alert erst nach Score-Update anzeigen
                 setTimeout(() => {
                     alert('Player ' + winner + ' hat gewonnen!');
-                }, 100);
+                }, 400);
             } catch (e) {
                 console.error('Fehler beim Score-Update:', e);
-                alert('Player ' + winner + ' hat gewonnen!');
+                setTimeout(() => {
+                    alert('Player ' + winner + ' hat gewonnen!');
+                }, 400);
             }
         } else {
             currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
@@ -129,15 +124,11 @@ document.addEventListener('DOMContentLoaded', async function () {
             try {
                 const csrfToken = document.querySelector('meta[name="csrf-token"]');
                 await fetch('/api/game/save-state', {
-                    method: 'POST',
-                    headers: {
+                    method: 'POST', headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': csrfToken ? csrfToken.getAttribute('content') : ''
-                    },
-                    body: JSON.stringify({
-                        board,
-                        currentPlayer,
-                        isGameOver
+                    }, body: JSON.stringify({
+                        board, currentPlayer, isGameOver
                     })
                 });
             } catch (e) {
@@ -156,8 +147,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         try {
             const csrfToken = document.querySelector('meta[name="csrf-token"]');
             await fetch('/api/scores/reset', {
-                method: 'POST',
-                headers: {
+                method: 'POST', headers: {
                     'X-CSRF-TOKEN': csrfToken ? csrfToken.getAttribute('content') : ''
                 }
             });
@@ -172,7 +162,6 @@ document.addEventListener('DOMContentLoaded', async function () {
         window.location.href = '/';
     });
 
-    // Nach dem Laden der Seite die Scores aus der Session oder DB anzeigen
     await renderScoresFromSessionOrDb();
     renderBoard();
 });
