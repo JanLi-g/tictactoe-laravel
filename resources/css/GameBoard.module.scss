@@ -24,16 +24,16 @@ $color-circle: rgb(230, 159, 0);
 }
 
 .wrapper .board {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  width: 90vw;
-  max-width: 340px;
-  margin: 32px auto;
-  background: linear-gradient(135deg, #e3f0ff 60%, #fff 100%);
-  border-radius: 18px;
-  box-shadow: 0 0 24px 8px rgba(25, 118, 210, 0.10), 8px 0 24px -8px rgba(25, 118, 210, 0.10);
-  padding: 18px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    width: 90vw;
+    max-width: 340px;
+    margin: 32px auto;
+    background: linear-gradient(135deg, #e3f0ff 60%, #fff 100%);
+    border-radius: 18px;
+    box-shadow: 0 0 24px 8px rgba(25, 118, 210, 0.10), 8px 0 24px -8px rgba(25, 118, 210, 0.10);
+    padding: 18px;
 
     .cell {
         width: 30vw;
@@ -44,7 +44,7 @@ $color-circle: rgb(230, 159, 0);
         align-items: center;
         background: #f8fafc;
         border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
         border: 2px solid #e0e7ef;
         cursor: pointer;
         transition: background 0.2s, box-shadow 0.2s, border-color 0.2s;
@@ -59,9 +59,12 @@ $color-circle: rgb(230, 159, 0);
 
 .board.x-turn .cell:hover {
     background-color: color.adjust($color-cross, $lightness: 40%);
+    color: #fff;
 }
+
 .board.o-turn .cell:hover {
     background-color: color.adjust($color-circle, $lightness: 40%);
+    color: #fff;
 }
 
 
@@ -79,13 +82,14 @@ $color-circle: rgb(230, 159, 0);
         padding: 0.5rem 1rem;
         font-size: 1.2rem;
         background: #fff;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 
         &.scoreX {
-            color: $color-cross;
+            color: color.adjust($color-cross, $lightness: 10%);
         }
+
         &.scoreO {
-            color: $color-circle;
+            color: color.adjust($color-circle, $lightness: 10%);
         }
 
         &.active {
@@ -100,6 +104,7 @@ $color-circle: rgb(230, 159, 0);
                 border-color: $color-cross;
                 box-shadow: 0 0 12px 2px rgba(0, 114, 178, 0.25);
             }
+
             &.scoreO {
                 border-color: $color-circle;
                 box-shadow: 0 0 12px 2px rgba(230, 159, 0, 0.25);
@@ -133,8 +138,12 @@ $color-circle: rgb(230, 159, 0);
 }
 
 @keyframes pulseScore {
-    from { transform: scale(1); }
-    to { transform: scale(1.04); }
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.04);
+    }
 }
 
 
@@ -147,26 +156,26 @@ $color-circle: rgb(230, 159, 0);
 }
 
 .wrapper .resetButton, .wrapper button, .wrapper a.button {
-  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
-  font-size: 1.2rem;
-  font-weight: 500;
-  color: #fff;
-  background-color: #1976d2;
-  border: none;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
-  padding: 0.5rem 1.5rem;
-  margin-top: 5px;
-  cursor: pointer;
-  letter-spacing: 1px;
-  transition: background 0.2s, box-shadow 0.2s;
-  text-align: center;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #fff;
+    background-color: #1976d2;
+    border: none;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
+    padding: 0.5rem 1.5rem;
+    margin-top: 5px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: background 0.2s, box-shadow 0.2s;
+    text-align: center;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
 .wrapper .resetButton:hover, .wrapper button:hover, .wrapper a.button:hover {
-  background-color: #1565c0;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    background-color: #1565c0;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
 .wrapper .alert {
@@ -185,6 +194,7 @@ $color-circle: rgb(230, 159, 0);
 
 .wrapper .setX {
     background-color: color.adjust($color-cross, $lightness: 20%);
+
     img, .icon-x {
         filter: drop-shadow(0 0 4px $color-cross);
     }
@@ -192,6 +202,7 @@ $color-circle: rgb(230, 159, 0);
 
 .wrapper .setO {
     background-color: color.adjust($color-circle, $lightness: 20%);
+
     img, .icon-o {
         filter: drop-shadow(0 0 4px $color-circle);
     }
@@ -206,23 +217,23 @@ $color-circle: rgb(230, 159, 0);
 }
 
 .wrapper .title {
-  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
-  font-size: 2.8rem;
-  font-weight: 700;
-  color: #222;
-  text-align: center;
-  margin-bottom: 0.5em;
-  letter-spacing: 2px;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #222;
+    text-align: center;
+    margin-bottom: 0.5em;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .wrapper .subtitle {
-  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: #444;
-  text-align: center;
-  margin-bottom: 0.7em;
-  letter-spacing: 1px;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #444;
+    text-align: center;
+    margin-bottom: 0.7em;
+    letter-spacing: 1px;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
