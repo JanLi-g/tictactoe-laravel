@@ -281,6 +281,28 @@ document.addEventListener('DOMContentLoaded', async function () {
         window.location.href = '/';
     });
 
+    const hardResetBtn = document.getElementById('hardreset-btn');
+    if (hardResetBtn) {
+        hardResetBtn.addEventListener('click', async function (e) {
+            e.preventDefault();
+            try {
+                const csrfToken = document.querySelector('meta[name="csrf-token"]');
+                await fetch('/game/hardreset', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken ? csrfToken.getAttribute('content') : ''
+                    }
+                });
+                board = Array(9).fill(null);
+                currentPlayer = 'X';
+                isGameOver = false;
+                renderBoard();
+                await renderScores(API.SCORES);
+            } catch (err) {
+                console.error('Fehler beim Hardreset:', err);
+            }
+        });
+    }
     await renderScores(API.SCORES_SESSION);
     renderBoard();
     updateScoreHighlight();

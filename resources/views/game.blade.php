@@ -15,10 +15,7 @@
                 @csrf
                 <x-button id="reset-btn" class="resetButton" type="submit">Spielfeld zurücksetzen</x-button>
             </form>
-            <form method="POST" action="{{ route('tictactoe.hardreset') }}" style="display:inline-block;">
-                @csrf
-                <x-button id="hardreset-btn" class="resetButton" type="submit">Hardreset (Score &amp; Spielfeld)</x-button>
-            </form>
+            <x-button id="hardreset-btn" class="resetButton" type="button">Hardreset (Score &amp; Spielfeld)</x-button>
         </div>
         <x-modal />
         <script id="game-data" type="application/json">
