@@ -2,8 +2,11 @@
     "private": true,
     "type": "module",
     "scripts": {
+        "dev": "vite",
         "build": "vite build",
-        "dev": "vite"
+        "lint:js": "eslint resources/js --ext .js",
+        "lint:css": "stylelint resources/css/**/*.scss",
+        "test": "phpunit"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",
@@ -12,6 +15,9 @@
         "laravel-vite-plugin": "^1.2.0",
         "sass-embedded": "^1.89.2",
         "tailwindcss": "^4.0.0",
-        "vite": "^6.2.4"
+        "vite": "^6.2.4",
+        "eslint": "^8.0.0",
+        "stylelint": "^15.0.0",
+        "stylelint-scss": "^4.0.0"
     }
 }

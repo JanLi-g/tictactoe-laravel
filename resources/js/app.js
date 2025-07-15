@@ -34,6 +34,12 @@ document.addEventListener('DOMContentLoaded', async function () {
         return;
     }
 
+    // Score-Elemente prüfen und ggf. Fehler ausgeben
+    if (!scoreX || !scoreO) {
+        console.error('Score-Elemente #score-x und/oder #score-o wurden nicht gefunden.');
+        return;
+    }
+
     /**
      * API-Endpunkte für die Scores und das Spiel.
      */
@@ -65,7 +71,11 @@ document.addEventListener('DOMContentLoaded', async function () {
         showScoreLoading();
         try {
             const response = await fetch(url);
-            if (!response.ok) throw new Error('API-Fehler');
+            if (!response.ok) {
+                showScoreError();
+                showGameError('API-Fehler', response.statusText);
+                return;
+            }
             const scores = await response.json();
             scoreX.textContent = `X: ${scores.x_score}`;
             scoreO.textContent = `O: ${scores.o_score}`;
@@ -76,13 +86,14 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     /**
-     * Zeichnet das Spielfeld neu.
+     * Zeichnet das Spielfeld neu (optimiert: Event Delegation, nur Board einmal rendern).
      */
     function renderBoard() {
         boardContainer.innerHTML = '';
         board.forEach((cell, idx) => {
             const cellDiv = document.createElement('div');
             cellDiv.className = 'cell';
+            cellDiv.dataset.idx = idx;
             if (cell === PLAYER_X) {
                 cellDiv.classList.add('setX');
                 cellDiv.innerHTML = `
@@ -100,11 +111,20 @@ document.addEventListener('DOMContentLoaded', async function () {
             } else {
                 cellDiv.classList.add(currentPlayer === PLAYER_X ? 'hover-x' : 'hover-o');
             }
-            cellDiv.addEventListener('click', () => handleCellClick(idx));
             boardContainer.appendChild(cellDiv);
         });
         updateBoardTurnClass();
     }
+
+    // Event Delegation für das Board
+    boardContainer.onclick = async function(e) {
+        const cellDiv = e.target.closest('.cell');
+        if (!cellDiv) return;
+        const idx = parseInt(cellDiv.dataset.idx);
+        if (isNaN(idx)) return;
+        await handleCellClick(idx);
+    };
+
     /**
      * Überprüft, ob es einen Gewinner gibt.
      */
@@ -188,7 +208,11 @@ document.addEventListener('DOMContentLoaded', async function () {
                     'X-CSRF-TOKEN': csrfToken ? csrfToken.getAttribute('content') : ''
                 }, body: JSON.stringify({ player, board, currentPlayer, isGameOver })
             });
-            if (!res.ok) throw new Error('Score-Increment fehlgeschlagen');
+            if (!res.ok) {
+                showScoreError();
+                showGameError('Score-Increment fehlgeschlagen', res.statusText);
+                return false;
+            }
             const data = await res.json();
             scoreX.textContent = `X: ${data.x_score}`;
             scoreO.textContent = `O: ${data.o_score}`;
@@ -220,7 +244,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         if (winner) {
             isGameOver = true;
             const player = winner.toLowerCase();
-            const success = await incrementScore(player, board, currentPlayer, isGameOver);
+            await incrementScore(player, board, currentPlayer, isGameOver);
             await saveGameState(board, currentPlayer, isGameOver);
             setTimeout(() => showModal(`Player ${winner} hat gewonnen!`), 400);
         } else {
