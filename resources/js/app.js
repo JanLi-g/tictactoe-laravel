@@ -76,6 +76,23 @@ document.addEventListener('DOMContentLoaded', async function () {
         return null;
     }
 
+    function showModal(message) {
+        let modal = document.createElement('div');
+        modal.style.position = 'fixed';
+        modal.style.top = '0';
+        modal.style.left = '0';
+        modal.style.width = '100vw';
+        modal.style.height = '100vh';
+        modal.style.background = 'rgba(0,0,0,0.5)';
+        modal.style.display = 'flex';
+        modal.style.alignItems = 'center';
+        modal.style.justifyContent = 'center';
+        modal.style.zIndex = '9999';
+        modal.innerHTML = `<div style="background:#fff;padding:2rem 3rem;border-radius:8px;box-shadow:0 2px 8px #0003;font-size:1.5rem;text-align:center;cursor:pointer;">${message}<br><br><button style='margin-top:1rem;padding:0.5rem 1.5rem;font-size:1rem;'>OK</button></div>`;
+        modal.querySelector('button').onclick = () => document.body.removeChild(modal);
+        document.body.appendChild(modal);
+    }
+
     async function handleCellClick(idx) {
 
         if (isGameOver || board[idx]) return;
@@ -88,7 +105,6 @@ document.addEventListener('DOMContentLoaded', async function () {
             const player = winner.toLowerCase();
             try {
                 const csrfToken = document.querySelector('meta[name="csrf-token"]');
-
                 const res = await fetch('/api/scores/increment', {
                     method: 'POST', headers: {
                         'Content-Type': 'application/json',
@@ -97,19 +113,18 @@ document.addEventListener('DOMContentLoaded', async function () {
                         player, board, currentPlayer, isGameOver
                     })
                 });
-
                 const data = await res.json();
                 scoreX.textContent = `X: ${data.x_score}`;
                 scoreO.textContent = `O: ${data.o_score}`;
                 scoreX.classList.toggle('active', currentPlayer === 'X');
                 scoreO.classList.toggle('active', currentPlayer === 'O');
                 setTimeout(() => {
-                    alert('Player ' + winner + ' hat gewonnen!');
+                    showModal('Player ' + winner + ' hat gewonnen!');
                 }, 400);
             } catch (e) {
                 console.error('Fehler beim Score-Update:', e);
                 setTimeout(() => {
-                    alert('Player ' + winner + ' hat gewonnen!');
+                    showModal('Player ' + winner + ' hat gewonnen!');
                 }, 400);
             }
         } else {

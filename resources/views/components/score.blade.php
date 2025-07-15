@@ -1,3 +1,3 @@
-<div id="score-{{ $player }}" class="score{{ $isActive ? ' active' : '' }}">
-    Player {{ $player }}: 0
+<div id="score-{{ strtolower($player) }}" class="score {{ (isset($active) && $active) ? 'active' : '' }}">
+    {{ $player }}: <span class="score-value">{{ $score }}</span>
 </div>

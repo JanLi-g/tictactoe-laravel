@@ -1,3 +1,8 @@
 <div class="cell" data-index="{{ $index }}">
-    <!-- Das Bild wird per JS eingefügt, abhängig vom Wert -->
+    @if($value === 'X')
+        <img src="/svg/x-solid.svg" alt="X" />
+    @elseif($value === 'O')
+        <img src="/svg/o-solid.svg" alt="O" />
+    @endif
 </div>
+
