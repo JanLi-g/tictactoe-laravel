@@ -1,170 +1,160 @@
 @use "sass:color";
 
-$color-cross:rgb(0,114,178);
-$color-circle:rgb(230,159,0);
+$color-cross: rgb(0, 114, 178);
+$color-circle: rgb(230, 159, 0);
 
 .wrapper {
-  max-width: 50vh;
-  margin-left: auto;
-  margin-right: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  gap: 6rem;
-
-  img {
-    height: 100%;
-  }
-
-  h1 {
-    font-size: 3rem;
-    margin: 0;
-  }
-
-  .board {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 5px;
-    width: 300px;
-    margin: 20px auto;
-
-    .cell {
-      width: 100px;
-      height: 100px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border: 1px solid black;
-      cursor: pointer;
-      background-color: white;
-      transition: background-color 0.3s;
-
-      &:hover {
-        background-color: #f0f0f0;
-      }
-
-      img {
-        width: 80%;
-        height: 80%;
-      }
-    }
-  }
-
-  .reset-b {
-    padding: 0.5rem 1.5rem;
-    font-size: 1.2rem;
-    cursor: pointer;
-    margin-top: 5px;
-  }
-
-  .score{
+    max-width: 50vh;
+    margin-left: auto;
+    margin-right: auto;
     display: flex;
-    width: 40%;
-    justify-content: space-between;
-  }
-
-  .active-player {
-    font-weight: bold;
-    color: green;
-    background-color: #f0f0f0;
-    padding: 2px 6px;
-    border-radius: 4px;
-  }
-
-  .scoreX{
-    color: $color-cross;
-  }
-
-  .scoreO{
-    color: $color-circle;
-  }
-
-  #scoreXId{
-    color: black;
-  }
-
-  #scoreOId{
-    color: black;
-  }
-
-  .setX{
-   background-color: color.adjust($color-cross, $lightness: 20%);
-
-    img {
-      filter: drop-shadow(0 0 4px $color-cross);
-    }
-  }
-
-  .setO{
-    background-color: color.adjust($color-circle, $lightness: 20%);
-
-    img {
-      filter: drop-shadow(0 0 4px $color-circle);
-    }
-  }
-
-  .cell {
-    width: 100px;
-    height: 100px;
-    display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: center;
-    border: 1px solid #000;
-    cursor: pointer;
+    align-items: center;
+    height: 100%;
+    gap: 6rem;
 
     img {
-      width: 80%;
-      height: 80%;
+        height: 100%;
     }
-  }
 
-  .scores {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 20px;
+    h1 {
+        font-size: 3rem;
+        margin: 0;
+    }
+
+    .board {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 5px;
+        width: 300px;
+        margin: 20px auto;
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid black;
+            cursor: pointer;
+            background-color: white;
+            transition: background-color 0.3s;
+
+            &:hover {
+                background-color: #f0f0f0;
+            }
+
+            img {
+                width: 80%;
+                height: 80%;
+            }
+        }
+    }
+
+    .reset-b {
+        padding: 0.5rem 1.5rem;
+        font-size: 1.2rem;
+        cursor: pointer;
+        margin-top: 5px;
+    }
 
     .score {
-      font-size: 18px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: auto;
     }
 
-    .active {
-      font-weight: bold;
-      color: green;
+    .scoreX {
+        color: $color-cross;
     }
-  }
 
-  .resetButton {
-    display: inline-block;
-    padding: 0.5rem 1.5rem;
-    font-size: 1.2rem;
-    cursor: pointer;
-    margin-top: 5px;
-    background-color: green;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: background 0.2s;
-
-    &:hover {
-      background-color: darkgreen;
+    .scoreO {
+        color: $color-circle;
     }
-  }
 
-  /* Modul-spezifische Stile für das Tic-Tac-Toe-Board */
-  .alert {
-    position: absolute;
-    top: 120px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 9999;
-    background-color: #f8d7da;
-    color: #721c24;
-    padding: 10px 20px;
-    border: 1px solid #f5c6cb;
-    border-radius: 5px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
+    #scoreXId {
+        color: black;
+    }
+
+    #scoreOId {
+        color: black;
+    }
+
+    .setX {
+        background-color: color.adjust($color-cross, $lightness: 20%);
+
+        img {
+            filter: drop-shadow(0 0 4px $color-cross);
+        }
+    }
+
+    .setO {
+        background-color: color.adjust($color-circle, $lightness: 20%);
+
+        img {
+            filter: drop-shadow(0 0 4px $color-circle);
+        }
+    }
+
+    .icon-x {
+        color: $color-cross;
+    }
+
+    .icon-o {
+        color: $color-circle;
+    }
+
+    .cell {
+        width: 100px;
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #000;
+        cursor: pointer;
+
+        img {
+            width: 80%;
+            height: 80%;
+        }
+    }
+
+    .scores .score.active {
+        font-weight: bold;
+    }
+
+    .resetButton {
+        display: inline-block;
+        padding: 0.5rem 1.5rem;
+        font-size: 1.2rem;
+        cursor: pointer;
+        margin-top: 5px;
+        background-color: green;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: background 0.2s;
+
+        &:hover {
+            background-color: darkgreen;
+        }
+    }
+
+    /* Modul-spezifische Stile für das Tic-Tac-Toe-Board */
+    .alert {
+        position: absolute;
+        top: 120px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 10px 20px;
+        border: 1px solid #f5c6cb;
+        border-radius: 5px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
 }

@@ -85,16 +85,53 @@ document.addEventListener('DOMContentLoaded', async function () {
         board.forEach((cell, idx) => {
             const cellDiv = document.createElement('div');
             cellDiv.className = 'cell';
-            if (cell === 'X' || cell === 'O') {
-                const img = document.createElement('img');
-                img.src = `/svg/${cell.toLowerCase()}-solid.svg`;
-                img.alt = cell;
-                cellDiv.appendChild(img);
+            if (cell === 'X') {
+                cellDiv.classList.add('setX');
+                cellDiv.innerHTML = `
+      <svg class="icon-x" viewBox="0 0 100 100">
+        <path d="M20,20 L80,80 M80,20 L20,80" stroke="currentColor" stroke-width="10" fill="none"/>
+      </svg>
+    `;
+            } else if (cell === 'O') {
+                cellDiv.classList.add('setO');
+                cellDiv.innerHTML = `
+      <svg class="icon-o" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="35" stroke="currentColor" stroke-width="10" fill="none"/>
+      </svg>
+    `;
             }
+            // if (cell === 'X') {
+            //     cellDiv.classList.add('setX');
+            //     const img = document.createElement('img');
+            //     img.src = `/svg/x-solid.svg`;
+            //     img.alt = 'X';
+            //     cellDiv.appendChild(img);
+            // } else if (cell === 'O') {
+            //     cellDiv.classList.add('setO');
+            //     const img = document.createElement('img');
+            //     img.src = `/svg/o-solid.svg`;
+            //     img.alt = 'O';
+            //     cellDiv.appendChild(img);
+            // }
             cellDiv.addEventListener('click', () => handleCellClick(idx));
             boardContainer.appendChild(cellDiv);
         });
     }
+    // function renderBoard() {
+    //     boardContainer.innerHTML = '';
+    //     board.forEach((cell, idx) => {
+    //         const cellDiv = document.createElement('div');
+    //         cellDiv.className = 'cell';
+    //         if (cell === 'X' || cell === 'O') {
+    //             const img = document.createElement('img');
+    //             img.src = `/svg/${cell.toLowerCase()}-solid.svg`;
+    //             img.alt = cell;
+    //             cellDiv.appendChild(img);
+    //         }
+    //         cellDiv.addEventListener('click', () => handleCellClick(idx));
+    //         boardContainer.appendChild(cellDiv);
+    //     });
+    // }
 
     /**
      * Überprüft, ob es einen Gewinner gibt.
