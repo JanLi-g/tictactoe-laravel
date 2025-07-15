@@ -16,327 +16,174 @@ $color-circle: rgb(230, 159, 0);
         font-size: 3rem;
         margin: 0;
     }
+}
 
-    .board {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 5px;
-        width: 90vw;
-        max-width: 300px;
-        margin: 20px auto;
+.wrapper .board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+    width: 90vw;
+    max-width: 300px;
+    margin: 20px auto;
 
-        .cell {
-            width: 30vw;
-            max-width: 100px;
-            aspect-ratio: 1 / 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 1px solid #000;
-            cursor: pointer;
-            background-color: #fff;
-            transition: background-color 0.3s;
-
-            img, .icon-x, .icon-o {
-                width: 80%;
-                height: 80%;
-            }
-        }
-    }
-
-    .board.x-turn .cell:hover {
-        background-color: color.adjust($color-cross, $lightness: 40%);
-    }
-    .board.o-turn .cell:hover {
-        background-color: color.adjust($color-circle, $lightness: 40%);
-    }
-
-    .scores {
+    .cell {
+        width: 30vw;
+        max-width: 100px;
+        aspect-ratio: 1 / 1;
         display: flex;
-        gap: 1rem;
-
-        .score {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            width: auto;
-            border-radius: 8px;
-            transition: box-shadow 0.3s, background 0.3s;
-
-            &.scoreX {
-                color: $color-cross;
-            }
-            &.scoreO {
-                color: $color-circle;
-            }
-
-            &.active {
-                background: linear-gradient(90deg, #e3f0ff 60%, #fff 100%);
-                box-shadow: 0 0 12px 2px rgba(25, 118, 210, 0.15);
-                border: 2px solid #1976d2;
-                animation: pulseScore 0.8s infinite alternate;
-                font-weight: bold;
-                padding: 0.5rem 1rem;
-
-                &.scoreX {
-                    border-color: $color-cross;
-                    box-shadow: 0 0 12px 2px rgba(0, 114, 178, 0.25);
-                }
-                &.scoreO {
-                    border-color: $color-circle;
-                    box-shadow: 0 0 12px 2px rgba(230, 159, 0, 0.25);
-                }
-            }
-
-            &:hover {
-                box-shadow: 0 0 16px 4px rgba(25, 118, 210, 0.18);
-            }
-        }
-    }
-
-    @keyframes pulseScore {
-        from { transform: scale(1); }
-        to { transform: scale(1.04); }
-    }
-
-    .setX {
-        background-color: color.adjust($color-cross, $lightness: 20%);
-        img, .icon-x {
-            filter: drop-shadow(0 0 4px $color-cross);
-        }
-    }
-
-    .setO {
-        background-color: color.adjust($color-circle, $lightness: 20%);
-        img, .icon-o {
-            filter: drop-shadow(0 0 4px $color-circle);
-        }
-    }
-
-    .icon-x {
-        color: $color-cross;
-    }
-
-    .icon-o {
-        color: $color-circle;
-    }
-
-    .resetButton {
-        display: inline-block;
-        padding: 0.5rem 1.5rem;
-        font-size: 1.2rem;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid #000;
         cursor: pointer;
-        margin-top: 5px;
-        background-color: green;
-        color: #fff;
-        border: none;
-        border-radius: 4px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        transition: background 0.2s;
+        background-color: #fff;
+        transition: background-color 0.3s;
 
-        &:hover {
-            background-color: darkgreen;
+        img, .icon-x, .icon-o {
+            width: 80%;
+            height: 80%;
         }
-    }
-
-    .alert {
-        position: absolute;
-        top: 120px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 9999;
-        background-color: #f8d7da;
-        color: #721c24;
-        padding: 10px 20px;
-        border: 1px solid #f5c6cb;
-        border-radius: 5px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 }
 
+.board.x-turn .cell:hover {
+    background-color: color.adjust($color-cross, $lightness: 40%);
+}
+.board.o-turn .cell:hover {
+    background-color: color.adjust($color-circle, $lightness: 40%);
+}
 
-//@use "sass:color";
-//
-//$color-cross: rgb(0, 114, 178);
-//$color-circle: rgb(230, 159, 0);
-//
-//.wrapper {
-//    max-width: 50vh;
-//    margin-left: auto;
-//    margin-right: auto;
-//    display: flex;
-//    flex-direction: column;
-//    justify-content: center;
-//    align-items: center;
-//    height: 100%;
-//    gap: 6rem;
-//
-//    img {
-//        height: 100%;
-//    }
-//
-//    h1 {
-//        font-size: 3rem;
-//        margin: 0;
-//    }
-//
-//    .board {
-//        display: grid;
-//        grid-template-columns: repeat(3, 1fr);
-//        gap: 5px;
-//        width: 300px;
-//        margin: 20px auto;
-//
-//        .cell {
-//            width: 100px;
-//            height: 100px;
-//            display: flex;
-//            justify-content: center;
-//            align-items: center;
-//            border: 1px solid black;
-//            cursor: pointer;
-//            background-color: white;
-//            transition: background-color 0.3s;
-//
-//            &:hover {
-//                background-color: #f0f0f0;
-//            }
-//
-//            img {
-//                width: 80%;
-//                height: 80%;
-//            }
-//        }
-//    }
-//
-//    .reset-b {
-//        padding: 0.5rem 1.5rem;
-//        font-size: 1.2rem;
-//        cursor: pointer;
-//        margin-top: 5px;
-//    }
-//
-//    .score {
-//        display: flex;
-//        align-items: center;
-//        gap: 0.5rem;
-//        width: auto;
-//    }
-//
-//    .score.active {
-//        background: linear-gradient(90deg, #e3f0ff 60%, #fff 100%);
-//        box-shadow: 0 0 12px 2px rgba(25, 118, 210, 0.15);
-//        border: 2px solid #1976d2;
-//        animation: pulseScore 0.8s infinite alternate;
-//        border-radius: 8px;
-//        padding: 0.5rem 1rem;
-//        transition: background 0.3s, box-shadow 0.3s;
-//    }
-//
-//    .scoreX.active {
-//        border-color: $color-cross;
-//        box-shadow: 0 0 12px 2px rgba(0, 114, 178, 0.25);
-//    }
-//
-//    .scoreO.active {
-//        border-color: $color-circle;
-//        box-shadow: 0 0 12px 2px rgba(230, 159, 0, 0.25);
-//    }
-//
-//    @keyframes pulseScore {
-//        from { transform: scale(1); }
-//        to { transform: scale(1.04); }
-//    }
-//
-//    .scoreX {
-//        color: $color-cross;
-//    }
-//
-//    .scoreO {
-//        color: $color-circle;
-//    }
-//
-//    #scoreXId {
-//        color: black;
-//    }
-//
-//    #scoreOId {
-//        color: black;
-//    }
-//
-//    .setX {
-//        background-color: color.adjust($color-cross, $lightness: 20%);
-//
-//        img {
-//            filter: drop-shadow(0 0 4px $color-cross);
-//        }
-//    }
-//
-//    .setO {
-//        background-color: color.adjust($color-circle, $lightness: 20%);
-//
-//        img {
-//            filter: drop-shadow(0 0 4px $color-circle);
-//        }
-//    }
-//
-//    .icon-x {
-//        color: $color-cross;
-//    }
-//
-//    .icon-o {
-//        color: $color-circle;
-//    }
-//
-//    .cell {
-//        width: 100px;
-//        height: 100px;
-//        display: flex;
-//        align-items: center;
-//        justify-content: center;
-//        border: 1px solid #000;
-//        cursor: pointer;
-//
-//        img {
-//            width: 80%;
-//            height: 80%;
-//        }
-//    }
-//
-//    .scores .score.active {
-//        font-weight: bold;
-//    }
-//
-//    .resetButton {
-//        display: inline-block;
-//        padding: 0.5rem 1.5rem;
-//        font-size: 1.2rem;
-//        cursor: pointer;
-//        margin-top: 5px;
-//        background-color: green;
-//        color: #fff;
-//        border: none;
-//        border-radius: 4px;
-//        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-//        transition: background 0.2s;
-//
-//        &:hover {
-//            background-color: darkgreen;
-//        }
-//    }
-//
-//    /* Modul-spezifische Stile für das Tic-Tac-Toe-Board */
-//    .alert {
-//        position: absolute;
-//        top: 120px;
-//        left: 50%;
-//        transform: translateX(-50%);
-//        z-index: 9999;
-//        background-color: #f8d7da;
-//        color: #721c24;
-//        padding: 10px 20px;
-//        border: 1px solid #f5c6cb;
-//        border-radius: 5px;
-//        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-//    }
-//}
+
+.wrapper .scores {
+    display: flex;
+    gap: 1rem;
+
+    .score {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: auto;
+        border-radius: 8px;
+        transition: box-shadow 0.3s, background 0.3s;
+        padding: 0.5rem 1rem;
+        font-size: 1.2rem;
+        background: #fff;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+
+        &.scoreX {
+            color: $color-cross;
+        }
+        &.scoreO {
+            color: $color-circle;
+        }
+
+        &.active {
+            background: linear-gradient(90deg, #e3f0ff 60%, #fff 100%);
+            box-shadow: 0 0 12px 2px rgba(25, 118, 210, 0.15);
+            border: 2px solid #1976d2;
+            animation: pulseScore 0.8s infinite alternate;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+
+            &.scoreX {
+                border-color: $color-cross;
+                box-shadow: 0 0 12px 2px rgba(0, 114, 178, 0.25);
+            }
+            &.scoreO {
+                border-color: $color-circle;
+                box-shadow: 0 0 12px 2px rgba(230, 159, 0, 0.25);
+            }
+        }
+
+        &:hover {
+            box-shadow: 0 0 16px 4px rgba(25, 118, 210, 0.18);
+        }
+
+        img {
+            width: 2rem;
+            height: 2rem;
+            margin-right: 0.5rem;
+        }
+
+        .score-content {
+            display: flex;
+            flex-direction: row;
+            gap: 0.5rem;
+        }
+
+        .score-label {
+            font-weight: bold;
+        }
+
+        .score-value {
+            font-family: monospace;
+        }
+    }
+}
+
+@keyframes pulseScore {
+    from { transform: scale(1); }
+    to { transform: scale(1.04); }
+}
+
+
+.wrapper .button-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 2rem;
+    align-items: center;
+}
+
+.wrapper .resetButton {
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-top: 5px;
+    background-color: green;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background 0.2s;
+
+    &:hover {
+        background-color: darkgreen;
+    }
+}
+
+.wrapper .alert {
+    position: absolute;
+    top: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px 20px;
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.wrapper .setX {
+    background-color: color.adjust($color-cross, $lightness: 20%);
+    img, .icon-x {
+        filter: drop-shadow(0 0 4px $color-cross);
+    }
+}
+
+.wrapper .setO {
+    background-color: color.adjust($color-circle, $lightness: 20%);
+    img, .icon-o {
+        filter: drop-shadow(0 0 4px $color-circle);
+    }
+}
+
+.wrapper .icon-x {
+    color: $color-cross;
+}
+
+.wrapper .icon-o {
+    color: $color-circle;
+}

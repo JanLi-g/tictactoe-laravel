@@ -6,8 +6,12 @@ import '../css/app.scss';
  */
 document.addEventListener('DOMContentLoaded', async function () {
 
+    // Konstanten für Spieler
+    const PLAYER_X = 'X';
+    const PLAYER_O = 'O';
+
     let gameData = document.getElementById('game-data');
-    let initialData = {board: Array(9).fill(null), currentPlayer: 'X', isGameOver: false};
+    let initialData = {board: Array(9).fill(null), currentPlayer: PLAYER_X, isGameOver: false};
     if (gameData) {
         try {
             initialData = JSON.parse(gameData.textContent);
@@ -32,7 +36,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     /**
      * API-Endpunkte für die Scores und das Spiel.
-     * @type {{SCORES: string, SCORES_SESSION: string, SCORES_INCREMENT: string, GAME_SAVE_STATE: string, GAME_RESET: string}}
      */
     const API = {
         SCORES: '/api/scores',
@@ -43,16 +46,13 @@ document.addEventListener('DOMContentLoaded', async function () {
     };
 
     /**
-     * Zeigt einen Ladezustand für die Scores an.
+     * UI-Hilfsfunktionen für Score-Anzeige
      */
     function showScoreLoading() {
         scoreX.innerHTML = '<span class="score-loading">X: <span class="loader"></span></span>';
         scoreO.innerHTML = '<span class="score-loading">O: <span class="loader"></span></span>';
     }
 
-    /**
-     * Zeigt einen Fehlertext für die Scores an.
-     */
     function showScoreError() {
         scoreX.textContent = 'X: Fehler';
         scoreO.textContent = 'O: Fehler';
@@ -60,8 +60,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     /**
      * Lädt und rendert die Scores von der API.
-     * @param url
-     * @returns {Promise<void>}
      */
     async function renderScores(url) {
         showScoreLoading();
@@ -73,7 +71,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             scoreO.textContent = `O: ${scores.o_score}`;
         } catch (e) {
             showScoreError();
-            console.error('Fehler beim Laden der Scores:', e);
+            showGameError('Fehler beim Laden der Scores.', e);
         }
     }
 
@@ -85,14 +83,14 @@ document.addEventListener('DOMContentLoaded', async function () {
         board.forEach((cell, idx) => {
             const cellDiv = document.createElement('div');
             cellDiv.className = 'cell';
-            if (cell === 'X') {
+            if (cell === PLAYER_X) {
                 cellDiv.classList.add('setX');
                 cellDiv.innerHTML = `
                 <svg class="icon-x" viewBox="0 0 100 100">
                     <path d="M20,20 L80,80 M80,20 L20,80" stroke="currentColor" stroke-width="10" fill="none"/>
                 </svg>
             `;
-            } else if (cell === 'O') {
+            } else if (cell === PLAYER_O) {
                 cellDiv.classList.add('setO');
                 cellDiv.innerHTML = `
                 <svg class="icon-o" viewBox="0 0 100 100">
@@ -101,16 +99,15 @@ document.addEventListener('DOMContentLoaded', async function () {
             `;
             } else {
                 // Hover-Klasse je nach aktuellem Spieler setzen
-                cellDiv.classList.add(currentPlayer === 'X' ? 'hover-x' : 'hover-o');
+                cellDiv.classList.add(currentPlayer === PLAYER_X ? 'hover-x' : 'hover-o');
             }
             cellDiv.addEventListener('click', () => handleCellClick(idx));
             boardContainer.appendChild(cellDiv);
         });
-        updateBoardTurnClass(); // <-- Hier einfügen
+        updateBoardTurnClass();
     }
     /**
      * Überprüft, ob es einen Gewinner gibt.
-     * @returns {any|null}
      */
     function checkWinner() {
         const winPatterns = [
@@ -129,7 +126,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     /**
      * Zeigt ein modales Fenster mit einer Win Alert an.
-     * @param message
      */
     function showModal(message) {
         let modal = document.createElement('div');
@@ -158,10 +154,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     /**
      * Speichert den aktuellen Spielstand auf dem Server.
-     * @param board
-     * @param currentPlayer
-     * @param isGameOver
-     * @returns {Promise<void>}
      */
     async function saveGameState(board, currentPlayer, isGameOver) {
         try {
@@ -173,17 +165,12 @@ document.addEventListener('DOMContentLoaded', async function () {
                 }, body: JSON.stringify({ board, currentPlayer, isGameOver })
             });
         } catch (e) {
-            console.error('Fehler beim Speichern des Spielstands:', e);
+            showGameError('Fehler beim Speichern des Spielstands.', e);
         }
     }
 
     /**
      * Erhöht den Score des aktuellen Spielers und aktualisiert die Anzeige.
-     * @param player
-     * @param board
-     * @param currentPlayer
-     * @param isGameOver
-     * @returns {Promise<boolean>}
      */
     async function incrementScore(player, board, currentPlayer, isGameOver) {
         try {
@@ -202,7 +189,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             return true;
         } catch (e) {
             showScoreError();
-            console.error('Fehler beim Score-Update:', e);
+            showGameError('Fehler beim Score-Update.', e);
             return false;
         }
     }
@@ -217,8 +204,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     /**
      * Behandelt den Klick auf eine Zelle des Spielfelds.
-     * @param idx
-     * @returns {Promise<void>}
      */
     async function handleCellClick(idx) {
         if (isGameOver || board[idx]) return;
@@ -232,7 +217,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             await saveGameState(board, currentPlayer, isGameOver);
             setTimeout(() => showModal(`Player ${winner} hat gewonnen!`), 400);
         } else {
-            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            currentPlayer = currentPlayer === PLAYER_X ? PLAYER_O : PLAYER_X;
             updateScoreHighlight();
             updateBoardTurnClass();
             await saveGameState(board, currentPlayer, isGameOver);
@@ -245,7 +230,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     resetBtn.addEventListener('click', async function (e) {
         e.preventDefault();
         board = Array(9).fill(null);
-        currentPlayer = 'X';
+        currentPlayer = PLAYER_X;
         isGameOver = false;
         try {
             const csrfToken = document.querySelector('meta[name="csrf-token"]');
@@ -255,7 +240,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 }
             });
         } catch (e) {
-            console.error('Fehler beim Spielfeld-Reset:', e);
+            showGameError('Fehler beim Spielfeld-Reset.', e);
         }
         renderBoard();
         await renderScores(API.SCORES);
@@ -278,17 +263,26 @@ document.addEventListener('DOMContentLoaded', async function () {
                     }
                 });
                 board = Array(9).fill(null);
-                currentPlayer = 'X';
+                currentPlayer = PLAYER_X;
                 isGameOver = false;
                 renderBoard();
                 await renderScores(API.SCORES);
             } catch (err) {
-                console.error('Fehler beim Hardreset:', err);
+                showGameError('Fehler beim Hardreset.', err);
             }
         });
     }
-    await renderScores(API.SCORES_SESSION);
-    renderBoard();
-    updateScoreHighlight();
-    updateBoardTurnClass();
+
+    /**
+     * Initialisiert das Spiel und rendert das Board sowie die Scores.
+     */
+    async function initGame() {
+        await renderScores(API.SCORES_SESSION);
+        renderBoard();
+        updateScoreHighlight();
+        updateBoardTurnClass();
+    }
+
+    // Initialisierung aufrufen
+    initGame();
 });
